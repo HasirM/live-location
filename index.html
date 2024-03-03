@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Location</title>
+</head>
+<body>
+  <h1>Live Location Address</h1>
+  <p id="address">Fetching address...</p>
+
+  <script>
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(position => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            const address = data.display_name;
+            document.getElementById("address").innerText = `Your current address: ${address}`;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            document.getElementById("address").innerText = 'Error fetching address';
+          });
+      }, error => {
+        console.error('Error getting location:', error);
+        document.getElementById("address").innerText = 'Error getting location';
+      });
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+      document.getElementById("address").innerText = 'Geolocation is not supported';
+    }
+  </script>
+</body>
+</html>
